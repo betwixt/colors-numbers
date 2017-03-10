@@ -14,11 +14,9 @@ class App extends Component {
     this.state = {
       month: "Jan",  // user-selected value for month
       daynum: 1,     // user-selected value for date
-      tmonth: targetMonth,
-      tday: targetDay,
-      tyear: thisYear,
       tDate: now,
       displayNum: 0,
+      weekStart: targetDay,
       weekActive: false,
       weekColors: [],
     }
@@ -93,7 +91,7 @@ class App extends Component {
                 </button>
                 <WeekBar colorNums={this.state.weekColors}
                      colorInfo={this.colorMap}
-                     startDay={this.state.tDate}
+                     startDay={this.state.weekStart}
                      setResult={this.setColorToDisplay}
                      active={this.state.weekActive} />
             </div>
@@ -122,10 +120,15 @@ class App extends Component {
     console.log("Selected day was set to " + val);
   }
 
-  // Action in BarSquare widget
+  // Action in BarSquare widget, to change ColorPane
   setColorToDisplay(num) {
     this.setState({displayNum: num});
     // console.log("Selected display color was set to " + num);
+  }
+
+  // Change which element is selected in WeekBar, also can be executed in 
+  // BarSquare widget
+  setWeekSelection(i) {
   }
 
   // Action in Input widget for target date
@@ -136,27 +139,23 @@ class App extends Component {
 
     // Parse string to get tmonth, tdate and tyear, then set state
     var y = datestr.slice(0,4);
-    this.setState({tyear: y });
-
-    var m  = datestr.slice(5,7)
-    this.setState({tmonth: m });
-
+    var m = datestr.slice(5,7)
     var d = datestr.slice(8)
-    this.setState({tday: d });
 
     var aDate = new Date(y, m-1, d);
-    this.setState({tDate: aDate});
+    this.setState({
+      tDate: aDate,
+      weekActive: false
+    });
 
-    /* When target changes, blank out WeekBar because days are updated,
-     * the colors won't be recalculated yet 
-     */
+    /* TODO:  When target changes, blank out WeekBar */
 
     console.log("In setTargetDay, aDate is " + aDate.toDateString());
   }
 
   // utility function, may go away
   targetDateString() {
-    var targ =  this.state.tmonth + "/" + this.state.tday + "/" + this.state.tyear
+    var targ =  this.state.tDate.toDateString();
     // console.log ("App sees target date is: " + targ);
     return targ;
   }
@@ -229,8 +228,11 @@ class App extends Component {
         aDate.setTime(aDate.getTime() + 86400000);
     }
     console.log("Colors array is: " + colors.toString());
-    this.setState({weekColors: colors});
-    this.setState({weekActive: true});
+    this.setState({
+        weekStart: this.state.tDate,
+        weekColors: colors,
+        weekActive: true
+    });
 
   }
 
@@ -537,17 +539,17 @@ class WeekBar extends React.Component {
     var element, num, name;
     var dayObj = new Date( this.props.startDay.getTime() );
 
-    for (let i=0; i<7; i++) { 
+    for (let n=0; n<7; n++) { 
 
-      num = this.props.colorNums[i];
+      num = this.props.colorNums[n];
       name = this.props.colorInfo.get(num).title;
-      /* Check for the titles with slashes, then abbreviate */
+      /* TODO Check for the titles with slashes, then abbreviate */
 
 
       element = <BarSquare
                     setColor={this.props.setResult}
-                    setChoice={() => this.setSelection(i)}
-                    highlight={this.state.items[i]}
+                    setChoice={() => this.setSelection(n)}
+                    highlight={this.state.items[n]}
                     dayName={dayObj.toDateString().slice(0,3).toUpperCase()}
                     dayNum={dayObj.getDate()}
                     colorName={name}

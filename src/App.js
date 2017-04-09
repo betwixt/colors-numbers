@@ -8,17 +8,15 @@ class App extends Component {
     super();
     // default target will be today
     var now = new Date();
-    var targetMonth = now.getMonth() + 1;
-    var targetDay = now.getDate();
-    var thisYear = new Date().getFullYear();
     this.state = {
-      month: "Jan",  // user-selected value for month
+      month: 1,  // user-selected value for month
       daynum: 1,     // user-selected value for date
       tDate: now,
       displayNum: 0,
-      weekStart: targetDay,
+      weekStart: now,
       weekActive: false,
       weekColors: [],
+      weekSelection: new Array(7).fill(false),
     }
 
     this.colorMap = new Map();
@@ -35,8 +33,13 @@ class App extends Component {
     this.colorMap.set(11, {title: "Black / White", bg: "black", desc: "Feel great!"});
     this.colorMap.set(22, {title: "Coral / Russet", bg: "coral", desc: "Feel great!"});
 
+
+    this.initialTarget = new Date(+now - now.getTimezoneOffset() * 60 * 1000).toISOString().slice(0,10);
+    console.log("Init target is " + this.initialTarget);
+
     // These statements are needed to allow passing functions as props 
     this.setMonthSelection = this.setMonthSelection.bind(this);
+    this.setWeekSelection = this.setWeekSelection.bind(this);
     this.setDaySelection = this.setDaySelection.bind(this);
     this.showTodayColor = this.showTodayColor.bind(this);
     this.showTargetDayColor = this.showTargetDayColor.bind(this);
@@ -80,7 +83,9 @@ class App extends Component {
             </div>
             <div id="choosing">
                 <p>  Choose a Day:  </p>
-                <input type="date" onChange={this.setTargetDay.bind(this) } />
+                <input type="date" 
+                       defaultValue = {this.initialTarget}
+                       onChange={this.setTargetDay.bind(this) } />
                 <button className="pickDay"  onClick={this.showTargetDayColor} >
                     MY COLOR for this Day
                 </button>
@@ -93,6 +98,8 @@ class App extends Component {
                      colorInfo={this.colorMap}
                      startDay={this.state.weekStart}
                      setResult={this.setColorToDisplay}
+                     items={this.state.weekSelection}
+                     setWeekday={this.setWeekSelection}
                      active={this.state.weekActive} />
             </div>
         </div>
@@ -107,31 +114,35 @@ class App extends Component {
     );
   }
 
-  // Action in Months widget
+  // Action in Months component
   /* TODO: When a month is selected, some calendar days may need to be grayed out */
   setMonthSelection(val) {
     this.setState({month: val});
     console.log("Selected month was set to " + val);
   }
 
-  // Action in Numbers widget (date of bday)
+  // Action in Numbers component (date of bday)
   setDaySelection(val) {
     this.setState({daynum: val});
     console.log("Selected day was set to " + val);
   }
 
-  // Action in BarSquare widget, to change ColorPane
+  // Action in BarSquare component, to change ColorPane
   setColorToDisplay(num) {
     this.setState({displayNum: num});
     // console.log("Selected display color was set to " + num);
   }
 
-  // Change which element is selected in WeekBar, also can be executed in 
-  // BarSquare widget
+  // Change which element is selected in WeekBar, also can be executed by 
+  // BarSquare component
   setWeekSelection(i) {
+    const items = Array(7).fill(false);
+    items[i] = true;
+
+    this.setState({weekSelection: items});
   }
 
-  // Action in Input widget for target date
+  // Action executed in component for target date
   setTargetDay(e) {
     var datestr = e.target.value;
     // Form of input - yyyy-mm-dd
@@ -148,8 +159,6 @@ class App extends Component {
       weekActive: false
     });
 
-    /* TODO:  When target changes, blank out WeekBar */
-
     console.log("In setTargetDay, aDate is " + aDate.toDateString());
   }
 
@@ -162,7 +171,6 @@ class App extends Component {
 
   displayColorForTarget(aDate) {
 
-    var output = "";
     var bmonth = this.state.month;
     var bdate = this.state.daynum;
 
@@ -171,10 +179,10 @@ class App extends Component {
     var y = aDate.getFullYear();
    
 
-    console.log("Calling calculate with " + this.targetDateString() );
+    console.log("Calling calculate with " + aDate.toDateString() );
     this.calculate( bmonth, bdate, m, d, y );
 
-    output = "Your personal year is " + this.personalYear 
+    var output = "Your personal year is " + this.personalYear 
       + ( "\nYour personal month is: " + this.personalMonth )
       + ("\n\nFor the date:  " + this.targetDateString()
       + ", your personal color is: " 
@@ -228,10 +236,16 @@ class App extends Component {
         aDate.setTime(aDate.getTime() + 86400000);
     }
     console.log("Colors array is: " + colors.toString());
+
+    this.showTargetDayColor();
+
+    const items = Array(7).fill(false);
+    items[0] = true;
     this.setState({
         weekStart: this.state.tDate,
         weekColors: colors,
-        weekActive: true
+        weekActive: true,
+        weekSelection: items
     });
 
   }
@@ -250,7 +264,7 @@ class App extends Component {
     this.personalYear = this.reduceDigits( this.reduceBirthNums(bmonth, bdate) + univYear );
     this.personalMonth = this.reduceDigits ( this.personalYear + this.reduceDigits(targMonth) );
     this.personalDay = this.reduceForPersonalDay(this.personalMonth, targDate)
-    // console.log("Calculated personal day: " + this.personalDay);
+    console.log("Calculated personal day: " + this.personalDay);
 
   }
 
@@ -333,8 +347,10 @@ class MonthChooser extends React.Component {
 
   constructor(){
       super();
+      let sq = Array(12).fill(false);
+      sq[0] = true;
       this.state = {
-        squares: Array(12).fill(false),
+        squares: sq,
         months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", 
                  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ]
       }
@@ -390,8 +406,10 @@ class NumChooser extends React.Component {
 
   constructor(){
     super();
+    let sq = Array(12).fill(false);
+    sq[0] = true;
     this.state = {
-      squares: Array(31).fill(false)
+      squares: sq
     }
     this.daysInMonth = new Map();
     this.daysInMonth.set(1, 31);
@@ -509,6 +527,8 @@ class ColorPane extends React.Component {
 //   *colorNums - array of color numbers for successive days
 //   *colorInfo - map of number to display information
 //   *active - whether or not to display
+//   *items - array representing item selection
+//   *setWeekday - closure from parent to update which Day (square) is selected
 //   *setResult  - closure from parent to change contents of ColorPane
 //
 class WeekBar extends React.Component {
@@ -516,26 +536,20 @@ class WeekBar extends React.Component {
   constructor(){
       super();
 
-      this.state = {
-        items: new Array(7).fill(false)
-      }
   }
 
-  setSelection(i) {
-    const items = Array(7).fill(false);
-    items[i] = true;
-
-    this.setState({items: items});
-  }
 
   render() {
 
-    if (! this.props.active) {
-         return ( <div> </div> )
-    }
+    var cstring;
+    if (! this.props.active) 
+       return(
+           <div className="barhide">  </div>
+    );
+    
 
     // Each item holds info: date num, day-of-week, colorNum
-    var dayInfo = [];
+    var dayInfo = []   ;
     var element, num, name;
     var dayObj = new Date( this.props.startDay.getTime() );
 
@@ -543,13 +557,14 @@ class WeekBar extends React.Component {
 
       num = this.props.colorNums[n];
       name = this.props.colorInfo.get(num).title;
-      /* TODO Check for the titles with slashes, then abbreviate */
+      /* Check for the titles that are too long, abbreviate */
+      if (num == 8) { name = "Pink / Brown"; }
 
 
       element = <BarSquare
                     setColor={this.props.setResult}
-                    setChoice={() => this.setSelection(n)}
-                    highlight={this.state.items[n]}
+                    setChoice={() => this.props.setWeekday(n)}
+                    highlight={this.props.items[n]}
                     dayName={dayObj.toDateString().slice(0,3).toUpperCase()}
                     dayNum={dayObj.getDate()}
                     colorName={name}
@@ -561,7 +576,7 @@ class WeekBar extends React.Component {
 
     }
     return ( 
-        <div> 
+        <div className="baractive"> 
             {dayInfo}
         </div> 
     );
@@ -590,9 +605,9 @@ class BarSquare extends React.Component {
 
   render() {
     var c;
-    if (this.props.highlight)  {
+    if (this.props.highlight)  
        c = "barselect";
-    } else
+    else
        c = "barsq"
 
     return (

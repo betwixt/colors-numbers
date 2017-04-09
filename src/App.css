@@ -7,9 +7,6 @@ body {
   margin: 20px;
 }
 
-ol, ul {
-  padding-left: 30px;
-}
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -40,10 +37,6 @@ h1 {
   clear: both; 
   content: "";
   display: table;
-}
-
-.status {
-  margin-bottom: 10px;
 }
 
 .square {
@@ -115,6 +108,11 @@ button{
     font: 14px "Century Gothic";
 }
 
+#today-section {
+    height: 70px;
+    // border: 2px solid green;
+}
+
 #today-section p{
     text-align: left;
     font: 18px "Georgia", "Times New Roman", serif;
@@ -134,6 +132,8 @@ button{
 
 #choosing  {
     text-align: left;
+    // height: 70px;
+    // border: 2px solid green;
 }
 
 #colorPane {
@@ -186,14 +186,25 @@ button{
    // height: 105px;
 }
 
-#bar > div {
+.baractive {
     display: block-inline;
     margin-left: 25px;
-    margin-right: 34px;
+    // margin-right: 34px;
     margin-top: 20px;
     height: 95px;
     border: 3px solid orange;
 }
+
+.barhide {
+  visibility: hidden;
+    display: block-inline;
+    margin-left: 25px;
+    // margin-right: 34px;
+    margin-top: 20px;
+    height: 95px;
+    border: 3px solid orange;
+}
+
 
 #bar button {
     display: block;

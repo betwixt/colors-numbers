@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
@@ -61,13 +60,13 @@ class App extends Component {
     return (
       <div className="App">
         <div className="App-header">
-          <h1>Colors and Numbers</h1>
-          <h2>Calculate Your Personal Day</h2>
+          <h1>Colors and Numbers </h1>
+          <h3>Calculate your Personal Color of the Day </h3>
         </div>
 
         <div id="top">
         <div id="controls">
-            <p className="App-intro">
+            <p className="instructions">
 	        Please enter the month and day of your birthday: </p>
             <div>
                 <MonthChooser  setResult={this.setMonthSelection} />
@@ -226,7 +225,7 @@ class App extends Component {
     var bmonth = this.state.month;
     var bdate = this.state.daynum;
 
-    /* Calculate colors for 7 successive days, pass it down to WeekBar */
+    /* Calculate colors for 7 successive days, set state that's seen by WeekBar */
     var colors = [];
     for (var i=0; i< 7; i++) {
         this.calculate(bmonth, bdate, aDate.getMonth()+1, aDate.getDate(), aDate.getFullYear())
@@ -320,7 +319,6 @@ class Square extends React.Component {
       return (
           <button 
                 style={{backgroundColor : "lightsteelblue"}}
-                disabled={this.props.disabled} 
                 className="square" 
                 onClick={() => this.props.clickAction()}  > 
              {this.props.value}
@@ -328,9 +326,19 @@ class Square extends React.Component {
       );
     }
 
+	if (this.props.disabled) {
+	  return (
+          <button 
+                style={{color: "gray"}}
+				disabled={true}
+                className="square" 
+                onClick={() => this.props.clickAction()}  > 
+             {this.props.value}
+          </button>
+      );
+	}
     return (
           <button  
-                disabled={this.props.disabled}  
                 className="square" 
                 onClick={() => this.props.clickAction()} >
              {this.props.value}
@@ -444,7 +452,7 @@ class NumChooser extends React.Component {
 
     return <Square value={i + 1} 
                    clickAction={() => this.setSelection(i)} 
-                   highlight={this.state.squares[i]}  
+                   highlight={isDisabled ? false : this.state.squares[i]}  
                    disabled={isDisabled}
            />;
   }
@@ -498,13 +506,6 @@ class ColorPane extends React.Component {
     var title = c.title;
     var desc = c.desc;
     var bg = c.bg;
-/*
-    this.setState({
-        colorTitle: title,
-        colorDescription: desc,
-        colorBG: bg
-    });
-*/
 
     var paneStyle = { backgroundColor: bg };
     return(
@@ -592,6 +593,7 @@ class WeekBar extends React.Component {
 //   *dayName - day of week
 //   *dayNum - calendar day
 //   *colorNum - number to set contents of ColorPane
+//
 class BarSquare extends React.Component {
 
   constructor(){
@@ -614,7 +616,7 @@ class BarSquare extends React.Component {
         <div onClick={() => this.doClickAct()} className={c}>
             <p className="weekday"> {this.props.dayName} </p>
             <p className="calnum"> {this.props.dayNum} </p>
-            <p> {this.props.colorName} </p>
+            <p className="sqtext"> {this.props.colorName} </p>
         </div>
     );
 

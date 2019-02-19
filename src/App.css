@@ -1,33 +1,32 @@
+
 .App {
   text-align: center;
+  // font: 14px "Times New Roman", Futura, sans-serif;
 }
 
-body {
-  font: 14px "Times New Roman", Futura, sans-serif;
-  margin: 20px;
-}
-
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
 
 .App-header {
   background-color: indigo;
-  height: 80px;
+  height: 100px;
   padding: 20px;
   color: orange;
+  width: 900px;
+  display: inline-block;
 }
 
 h1 {
-  margin-top: 5px;
+  margin: 5px;
+  font-size: 24px;
+  font-weight: bold;
+}
+h3 {
+  margin: 5px;
+  font-size: 20px;
 }
 
-.App-intro {
+.instructions {
   font: 14px "Century Gothic";
   font-weight: bold;
-//  font-style: italic;
   font-size: small;
   margin-top: 0;
 }
@@ -115,7 +114,7 @@ button{
 
 #today-section p{
     text-align: left;
-    font: 18px "Georgia", "Times New Roman", serif;
+    font: 24px "Georgia", "Times New Roman", serif;
     font-style: italic;
     color: red;
     display: inline-block;
@@ -137,7 +136,6 @@ button{
 }
 
 #colorPane {
-    background-color: red;
     color: white;
     float: right;
     width: 300px;
@@ -148,26 +146,33 @@ button{
 }
 
 .barsq p, .barselect p {
-  margin: 5px 2px;
-  font: "Century Gothic";
+  margin-bottom: 0px; 
+  // font-family: "Georgia";
+  // border: 1px solid green;
 }
 
 .barsq{
   text-align: center;
   border: 1px solid #999;
   float: left;
-  height: 85px;
-  width: 55px;
+  height: 97px;
+  width: 65px;
   padding: 5px;
 }
 
 .barselect{
   text-align: center;
+  border: 1px solid #999;
   background: powderblue;
   float: left;
-  height: 85px;
-  width: 55px;
+  height: 97px;
+  width: 65px;
   padding: 5px;
+}
+
+.weekday{
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .calnum{
@@ -176,22 +181,22 @@ button{
   color: blue;
 }
 
-.weekday{
-  font-size: 10px;
+.sqtext{
+  font-size: 14px;
+  font-style: italic;
 }
+
 
 #bar {
     margin-top: 10px;
-    display: block;
-   // height: 105px;
+    display: table;
 }
 
 .baractive {
     display: block-inline;
     margin-left: 25px;
-    // margin-right: 34px;
     margin-top: 20px;
-    height: 95px;
+    height: 103px;
     border: 3px solid orange;
 }
 
@@ -199,14 +204,13 @@ button{
   visibility: hidden;
     display: block-inline;
     margin-left: 25px;
-    // margin-right: 34px;
     margin-top: 20px;
-    height: 95px;
+    height: 103px;
     border: 3px solid orange;
 }
 
 
-#bar button {
+#weekbutton {
     display: block;
     position: relative;
     left: 25px;
